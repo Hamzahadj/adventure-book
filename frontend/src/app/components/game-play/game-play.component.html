@@ -1,0 +1,54 @@
+<header class="game-status-bar">
+    <div class="book-info">
+        <span>Book #{{ bookId }}</span>
+        <span>Life: {{ gameState?.healthPoints }}</span>
+    </div>
+
+    <div class="game-actions">
+        <button (click)="onSaveGame()" class="btn-save"> Save Game</button>
+        <button (click)="onResumeGame()" class="btn-resume"> Resume Game</button>
+    </div>
+</header>
+<div class="game-container" *ngIf="gameState">
+
+    <!-- Status & Stats Bar -->
+    <div class="status-bar">
+        <div class="health-indicator">
+            <strong>Health:</strong> <span class="health-val">{{ gameState.healthPoints }}</span> / 10
+        </div>
+        <div class="message-banner" *ngIf="gameState.message">
+            {{ gameState.message }}
+        </div>
+    </div>
+
+    <!-- Narrative Text Panel -->
+    <div class="narrative-panel">
+        <p>{{ gameState.sectionText }}</p>
+    </div>
+
+    <!-- End Game Panel (Victory / Defeat) -->
+    <div *ngIf="gameState.isGameOver || gameState.isVictory" class="endgame-panel">
+        <h2 [class.victory-text]="gameState.isVictory" [class.defeat-text]="!gameState.isVictory">
+            {{ gameState.isVictory ? 'VICTORY ACHIEVED!' : 'GAME OVER' }}
+        </h2>
+        <button class="btn-menu" (click)="returnToMenu()">Return to Menu</button>
+    </div>
+
+    <!-- Available Choices Panel -->
+    <div *ngIf="!gameState.isGameOver && !gameState.isVictory" class="options-panel">
+        <h3>What do you want to do?</h3>
+        <ul>
+            <!-- Supports both options or optionResponses depending on your DTO serialization name -->
+            <li *ngFor="let option of (gameState.options || gameState.optionResponses)">
+                <button class="btn-option" (click)="makeChoice(option)" [disabled]="isLoading">
+                    {{ option.description }}
+                </button>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<div *ngIf="errorMessage" class="alert-error">
+    {{ errorMessage }}
+</div>

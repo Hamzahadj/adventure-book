@@ -1,0 +1,35 @@
+<div class="book-selector-container">
+    <h2>Adventure Books</h2>
+
+    <div *ngIf="errorMessage" class="alert-error">
+        {{ errorMessage }}
+    </div>
+
+    <div class="import-panel">
+        <h3>Import New Adventure (JSON)</h3>
+        <label>
+<textarea
+        [(ngModel)]="rawJsonInput"
+        rows="6"
+        placeholder="Paste book JSON structure here...">
+</textarea>
+        </label>
+        <button (click)="importBook()" [disabled]="isLoading">Import Book</button>
+    </div>
+
+    <div class="books-list-panel">
+        <h3>Available Adventures</h3>
+        <ul *ngIf="books.length > 0; else noBooks">
+            <li *ngFor="let book of books" class="book-item">
+                <div class="book-info">
+                    <strong>{{ book.title }}</strong>
+                    <span class="author">by {{ book.author }}</span>
+                </div>
+                <button class="btn-play" (click)="playBook(book.id)">Play</button>
+            </li>
+        </ul>
+        <ng-template #noBooks>
+            <p class="empty-state">No adventure books found in the system. Import one above to begin!</p>
+        </ng-template>
+    </div>
+</div>
