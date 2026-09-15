@@ -98,7 +98,7 @@ public class BookLoaderService {
         }
 
         return ConsequenceEmbeddable.builder()
-                .type(ConsequenceType.valueOf(consequence.type().toString()))
+                .type(ConsequenceType.valueOf(consequence.type().name()))
                 .value(consequence.value())
                 .build();
     }
