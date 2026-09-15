@@ -1,9 +1,9 @@
 package org.hamza.book.service;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hamza.book.dtos.BookImportDto;
-import org.hamza.book.dtos.BookSummaryResponse;
+import org.hamza.book.dtos.*;
 import org.hamza.book.enums.ConsequenceType;
 import org.hamza.book.exception.InvalidBookException;
 import org.hamza.book.model.BookEntity;
@@ -12,7 +12,6 @@ import org.hamza.book.model.OptionEntity;
 import org.hamza.book.model.SectionEntity;
 import org.hamza.book.parser.JsonBookParser;
 import org.hamza.book.repository.BookRepository;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +48,7 @@ public class BookLoaderService {
                 .toList();
     }
 
-   
+
 
     private BookEntity mapToEntity(BookImportDto dto) {
         BookEntity book = BookEntity.builder()
@@ -59,40 +57,48 @@ public class BookLoaderService {
                 .build();
 
         if (dto.sections() != null) {
-            List<SectionEntity> sectionEntities = dto.sections().stream().map(sDto -> {
-                SectionEntity section = SectionEntity.builder()
-                        .originalSectionId(sDto.id())
-                        .text(sDto.text())
-                        .type(sDto.type())
-                        .book(book)
-                        .build();
-
-                if (sDto.options() != null) {
-                    List<OptionEntity> optionEntities = sDto.options().stream().map(oDto -> {
-                        ConsequenceEmbeddable consequence = null;
-                        if (oDto.consequence() != null) {
-                            consequence = ConsequenceEmbeddable.builder()
-                                    .type(ConsequenceType.valueOf(String.valueOf(oDto.consequence().type())))
-                                    .value(oDto.consequence().value())
-                                    .build();
-                        }
-
-                        return OptionEntity.builder()
-                                .description(oDto.description())
-                                .gotoId(oDto.gotoId())
-                                .consequence(consequence)
-                                .section(section)
-                                .build();
-                    }).collect(Collectors.toList());
-
-                    section.setOptions(optionEntities);
-                }
-                return section;
-            }).collect(Collectors.toList());
-
-            book.setSections(sectionEntities);
+            book.setSections(dto.sections().stream()
+                    .map(sectionDto -> mapSection(sectionDto, book))
+                    .toList());
         }
 
         return book;
+    }
+
+    private SectionEntity mapSection(SectionImportDto dto, BookEntity book) {
+        SectionEntity section = SectionEntity.builder()
+                .originalSectionId(dto.id())
+                .text(dto.text())
+                .type(dto.type())
+                .book(book)
+                .build();
+
+        if (dto.options() != null) {
+            section.setOptions(dto.options().stream()
+                    .map(optionDto -> mapOption(optionDto, section))
+                    .toList());
+        }
+
+        return section;
+    }
+
+    private OptionEntity mapOption(@Valid OptionImportDto dto, SectionEntity section) {
+        return OptionEntity.builder()
+                .description(dto.description())
+                .gotoId(dto.gotoId())
+                .consequence(mapConsequence(dto.consequence()))
+                .section(section)
+                .build();
+    }
+
+    private ConsequenceEmbeddable mapConsequence(ConsequenceDto dto) {
+        if (dto == null) {
+            return null;
+        }
+
+        return ConsequenceEmbeddable.builder()
+                .type(ConsequenceType.valueOf(dto.type().toString()))
+                .value(dto.value())
+                .build();
     }
 }
