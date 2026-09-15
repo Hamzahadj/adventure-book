@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class BookValidationService {
 
-    public void validateBook(BookEntity book) {
-        List<SectionEntity> sections = book.getSections();
+    public void validateBook(BookEntity bookEntity) {
+        List<SectionEntity> sections = bookEntity.getSections();
 
         if (CollectionUtils.isEmpty(sections)) {
             throw new InvalidBookException("Book must contain at least one section.");
@@ -30,8 +30,8 @@ public class BookValidationService {
         validateSectionIntegrity(sections, validSectionIds);
     }
 
-    private void validateBeginningSections(List<SectionEntity> sections) {
-        long beginCount = sections.stream()
+    private void validateBeginningSections(List<SectionEntity> sectionEntities) {
+        long beginCount = sectionEntities.stream()
                 .filter(s -> SectionType.BEGIN.equals(s.getType()))
                 .count();
 
@@ -40,8 +40,8 @@ public class BookValidationService {
         }
     }
 
-    private void validateEndingSections(List<SectionEntity> sections) {
-        boolean hasEnding = sections.stream()
+    private void validateEndingSections(List<SectionEntity> sectionEntities) {
+        boolean hasEnding = sectionEntities.stream()
                 .anyMatch(s -> SectionType.END.equals(s.getType()) || CollectionUtils.isEmpty(s.getOptions()));
 
         if (!hasEnding) {
@@ -49,14 +49,14 @@ public class BookValidationService {
         }
     }
 
-    private Set<Long> extractValidSectionIds(List<SectionEntity> sections) {
-        return sections.stream()
+    private Set<Long> extractValidSectionIds(List<SectionEntity> sectionEntities) {
+        return sectionEntities.stream()
                 .map(SectionEntity::getOriginalSectionId)
                 .collect(Collectors.toSet());
     }
 
-    private void validateSectionIntegrity(List<SectionEntity> sections, Set<Long> validSectionIds) {
-        for (SectionEntity section : sections) {
+    private void validateSectionIntegrity(List<SectionEntity> sectionEntities, Set<Long> validSectionIds) {
+        for (SectionEntity section : sectionEntities) {
             boolean isEndSection = SectionType.END.equals(section.getType());
             List<OptionEntity> options = section.getOptions();
 

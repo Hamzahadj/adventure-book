@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class GameEngineService {
@@ -96,15 +98,14 @@ public class GameEngineService {
                 .orElseThrow(() -> new InvalidBookException("Section ID " + sectionOriginalId + " does not exist in this book."));
     }
 
-    private int calculateUpdatedHealth(BookEntity book, Long currentSectionOriginalId, Long chosenGotoId, int currentHealth) {
-        return book.getSections().stream()
+    private int calculateUpdatedHealth(BookEntity bookEntity, Long currentSectionOriginalId, Long chosenGotoId, int currentHealth) {
+        return bookEntity.getSections().stream()
                 .filter(s -> s.getOriginalSectionId().equals(currentSectionOriginalId))
                 .findFirst()
                 .flatMap(currentSection -> currentSection.getOptions().stream()
                         .filter(o -> o.getGotoId().equals(chosenGotoId))
                         .findFirst())
                 .map(OptionEntity::getConsequence)
-                .filter(consequence -> consequence != null)
                 .map(consequence -> consequence.applyTo(currentHealth))
                 .orElse(currentHealth);
     }

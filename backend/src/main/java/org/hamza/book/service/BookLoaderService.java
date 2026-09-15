@@ -26,7 +26,7 @@ import java.util.List;
 public class BookLoaderService {
 
     private final JsonBookParser jsonBookParser;
-    private final BookValidationService validationService;
+    private final BookValidationService bookValidationService;
     private final BookRepository bookRepository;
 
     @Transactional
@@ -34,7 +34,7 @@ public class BookLoaderService {
         try (InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8))) {
             BookImport importDto = jsonBookParser.parse(inputStream);
             BookEntity book = mapToEntity(importDto);
-            validationService.validateBook(book);
+            bookValidationService.validateBook(book);
             return bookRepository.save(book);
         } catch (IOException e) {
             throw new InvalidBookException("Failed to read JSON content: " + e.getMessage());
