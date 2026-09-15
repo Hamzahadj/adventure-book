@@ -23,7 +23,7 @@
             <li *ngFor="let book of books" class="book-item">
                 <div class="book-info">
                     <strong>{{ book.title }}</strong>
-                    <span class="author">by {{ book.author }}</span>
+                    <span class="author"> &nbsp; of {{ book.author }}</span>
                 </div>
                 <button class="btn-play" (click)="playBook(book.id)">Play</button>
             </li>
