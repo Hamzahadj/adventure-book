@@ -30,8 +30,9 @@ public class GameController {
     @PostMapping("/save")
     public ResponseEntity<Void> saveGame(
             @PathVariable("bookId") Long bookId,
-            @RequestHeader(value = "X-User-Id", defaultValue = "guest-user") String userId,
+            @RequestHeader(value = "X-User-Id") String userId,
             @RequestBody PlayerChoiceRequest request) {
+
         gameEngineService.saveGame(bookId, userId, request, false, false, "Game saved successfully.");
         return ResponseEntity.ok().build();
     }
@@ -40,7 +41,9 @@ public class GameController {
     @GetMapping("/resume")
     public ResponseEntity<GameStateResponse> resumeGame(
             @PathVariable("bookId") Long bookId,
-            @RequestHeader(value = "X-User-Id", defaultValue = "guest-user") String userId) {
+            @RequestHeader(value = "X-User-Id") String userId) {
+
+
         GameStateResponse state = gameEngineService.resumeGame(bookId, userId);
         return ResponseEntity.ok(state);
     }

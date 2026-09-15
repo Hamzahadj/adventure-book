@@ -10,6 +10,7 @@ import org.hamza.book.repository.GameSessionRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 @Service
@@ -54,6 +55,7 @@ public class GameEngineService {
 
     @Transactional
     public void saveGame(Long bookId, String userId, PlayerChoiceRequest request, boolean isGameOver, boolean isVictory, String message) {
+        validateUserId(userId);
         GameSessionEntity session = gameSessionRepository.findByBookIdAndUserId(bookId, userId)
                 .orElse(new GameSessionEntity());
 
@@ -70,6 +72,7 @@ public class GameEngineService {
 
     @Transactional(readOnly = true)
     public GameStateResponse resumeGame(Long bookId, String userId) {
+        validateUserId(userId);
         GameSessionEntity session = gameSessionRepository.findByBookIdAndUserId(bookId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("No saved game found for user " + userId + " on book ID: " + bookId));
 
@@ -158,5 +161,11 @@ public class GameEngineService {
                 option.getGotoId(),
                 consequenceResponse
         );
+    }
+
+    private void validateUserId(String userId) {
+        if (!StringUtils.hasText(userId)) {
+            throw new IllegalArgumentException("User ID cannot be blank.");
+        }
     }
 }

@@ -26,7 +26,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // Authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/game/**", "/api/books/**").permitAll() // Adjust public endpoints as needed
+                        .requestMatchers("/api/game/**", "/api/books/**").permitAll() // to be adjusted as needed
                         .anyRequest().authenticated()
                 );
 
