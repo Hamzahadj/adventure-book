@@ -8,7 +8,7 @@ import { GameStateResponse } from '../models/game-state-response.model';
   providedIn: 'root'
 })
 export class GameService {
-  private apiUrl = '/api/books'; // or your full backend URL if needed
+  private apiUrl = '/api/books';
 
   constructor(private http: HttpClient) {}
 
