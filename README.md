@@ -27,7 +27,7 @@ An interactive text-based adventure game platform built with a decoupled **Sprin
 
 ## ⚙️ Getting Started & Prerequisites
 
-### 1. Backend Setup (Spring Boot)
+###  Setup (Spring Boot)
 1. Clone the repository and navigate to the backend directory.
 2. Ensure your database container (PostgreSQL or MySQL) is running via Docker.
 3. Configure your database and Hibernate settings in `application.yml`
