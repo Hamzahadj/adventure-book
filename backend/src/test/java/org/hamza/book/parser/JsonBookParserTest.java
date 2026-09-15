@@ -3,7 +3,7 @@ package org.hamza.book.parser;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamza.book.dtos.BookImportDto;
+import org.hamza.book.dtos.BookImport;
 import org.hamza.book.exception.InvalidBookException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,12 +35,12 @@ class JsonBookParserTest {
         String jsonContent = "{\"title\": \"Test Book\", \"sections\": []}";
         InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8));
 
-        BookImportDto mockDto = new BookImportDto("Test Book", null, null);
-        when(objectMapper.readValue(any(InputStream.class), eq(BookImportDto.class)))
+        BookImport mockDto = new BookImport("Test Book", null, null);
+        when(objectMapper.readValue(any(InputStream.class), eq(BookImport.class)))
                 .thenReturn(mockDto);
 
         // Act
-        BookImportDto result = jsonBookParser.parse(inputStream);
+        BookImport result = jsonBookParser.parse(inputStream);
 
         // Assert
         assertNotNull(result);
@@ -52,7 +52,7 @@ class JsonBookParserTest {
         // Arrange
         InputStream inputStream = new ByteArrayInputStream("invalid json".getBytes(StandardCharsets.UTF_8));
 
-        when(objectMapper.readValue(any(InputStream.class), eq(BookImportDto.class)))
+        when(objectMapper.readValue(any(InputStream.class), eq(BookImport.class)))
                 .thenThrow(new IOException("Malformed JSON"));
 
         // Act & Assert

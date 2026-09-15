@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record OptionImportDto(
+public record OptionImport(
         @NotBlank(message = "Option description is required")
         String description,
 
@@ -12,5 +12,5 @@ public record OptionImportDto(
         Long gotoId,
 
         @Valid // Validates inner fields if consequence is provided
-        ConsequenceDto consequence
+        Consequence consequence
 ) {}

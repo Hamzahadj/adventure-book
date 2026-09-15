@@ -5,14 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 
-public record BookImportDto(
+public record BookImport(
         @NotBlank(message = "Book title is required")
         String title,
 
         @NotBlank(message = "Book author is required")
         String author,
 
-        @Valid List<SectionImportDto> sections
+        @Valid List<SectionImport> sections
 
 
 ) {}

@@ -32,7 +32,7 @@ public class BookLoaderService {
     @Transactional
     public BookEntity loadBookFromJson(String jsonContent) {
         try (InputStream inputStream = new ByteArrayInputStream(jsonContent.getBytes(StandardCharsets.UTF_8))) {
-            BookImportDto importDto = jsonBookParser.parse(inputStream);
+            BookImport importDto = jsonBookParser.parse(inputStream);
             BookEntity book = mapToEntity(importDto);
             validationService.validateBook(book);
             return bookRepository.save(book);
@@ -50,31 +50,32 @@ public class BookLoaderService {
 
 
 
-    private BookEntity mapToEntity(BookImportDto dto) {
+    private BookEntity mapToEntity(BookImport bookImport) {
         BookEntity book = BookEntity.builder()
-                .title(dto.title())
-                .author(dto.author())
+                .title(bookImport.title())
+                .author(bookImport.author())
                 .build();
 
-        if (dto.sections() != null) {
-            book.setSections(dto.sections().stream()
-                    .map(sectionDto -> mapSection(sectionDto, book))
+        if (bookImport.sections() != null) {
+            book.setSections(bookImport.sections().stream()
+                    .map(sectionImport
+                            -> mapSection(sectionImport, book))
                     .toList());
         }
 
         return book;
     }
 
-    private SectionEntity mapSection(SectionImportDto dto, BookEntity book) {
+    private SectionEntity mapSection(SectionImport sectionImport, BookEntity bookEntity) {
         SectionEntity section = SectionEntity.builder()
-                .originalSectionId(dto.id())
-                .text(dto.text())
-                .type(dto.type())
-                .book(book)
+                .originalSectionId(sectionImport.id())
+                .text(sectionImport.text())
+                .type(sectionImport.type())
+                .book(bookEntity)
                 .build();
 
-        if (dto.options() != null) {
-            section.setOptions(dto.options().stream()
+        if (sectionImport.options() != null) {
+            section.setOptions(sectionImport.options().stream()
                     .map(optionDto -> mapOption(optionDto, section))
                     .toList());
         }
@@ -82,23 +83,23 @@ public class BookLoaderService {
         return section;
     }
 
-    private OptionEntity mapOption(@Valid OptionImportDto dto, SectionEntity section) {
+    private OptionEntity mapOption(@Valid OptionImport optionImport, SectionEntity sectionEntity) {
         return OptionEntity.builder()
-                .description(dto.description())
-                .gotoId(dto.gotoId())
-                .consequence(mapConsequence(dto.consequence()))
-                .section(section)
+                .description(optionImport.description())
+                .gotoId(optionImport.gotoId())
+                .consequence(mapConsequence(optionImport.consequence()))
+                .section(sectionEntity)
                 .build();
     }
 
-    private ConsequenceEmbeddable mapConsequence(ConsequenceDto dto) {
-        if (dto == null) {
+    private ConsequenceEmbeddable mapConsequence(Consequence consequence) {
+        if (consequence == null) {
             return null;
         }
 
         return ConsequenceEmbeddable.builder()
-                .type(ConsequenceType.valueOf(dto.type().toString()))
-                .value(dto.value())
+                .type(ConsequenceType.valueOf(consequence.type().toString()))
+                .value(consequence.value())
                 .build();
     }
 }

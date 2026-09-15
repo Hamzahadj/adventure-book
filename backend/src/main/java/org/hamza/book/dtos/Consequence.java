@@ -3,7 +3,7 @@ package org.hamza.book.dtos;
 import jakarta.validation.constraints.NotNull;
 import org.hamza.book.enums.ConsequenceType;
 
-public record ConsequenceDto(
+public record Consequence(
         @NotNull(message = "Consequence type is required")
         ConsequenceType type,
 

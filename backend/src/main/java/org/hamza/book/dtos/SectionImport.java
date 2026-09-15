@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
-public record SectionImportDto(
+public record SectionImport(
         @NotNull(message = "Section ID is required")
         Long id,
 
@@ -17,5 +17,5 @@ public record SectionImportDto(
         SectionType type,
 
         @NotNull(message = "Options list cannot be null")
-        List<@Valid OptionImportDto> options
+        List<@Valid OptionImport> options
 ) {}
