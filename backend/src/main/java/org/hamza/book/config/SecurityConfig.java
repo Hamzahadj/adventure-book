@@ -18,8 +18,8 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Disable CSRF since this is a stateless REST API communicating with an Angular SPA
                 .csrf(AbstractHttpConfigurer::disable)
                 // Ensure session is stateless (no HttpSession created by Spring Security)
@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
 
-        return http.build();
+        return httpSecurity.build();
     }
 
     @Bean
